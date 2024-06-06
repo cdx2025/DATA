@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DECRYP TOOLS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: monospace;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin-top: -1px;
+            text-align: center;
+        }
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            margin-top: 40px;
+            border-radius: 10px;
+        }
+        .header {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color:  #442866;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .button {
+            padding: 20px 100px;
+            font-size: 20px;
+            cursor: pointer;
+            background-color: #442866;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-family: monospace;
+            margin-top: 30px;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #6D41A2;
+        }
+        .result {
+            display: none; /* Initially hidden */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            width: 80%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 20px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .result textarea {
+            width: 100%;
+            height: 300px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .dropbtn {
+            background-color: #442866;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .dropbtn:hover, .dropbtn:focus {
+            background-color: #6D41A2;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+            right: 0;
+        }
+        .dropdown-content a {
+            color: #442866;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        .dropdown-content a i {
+            margin-right: 8px;
+        }
+        .dropdown-content a:hover {
+            background-color: #442866;
+            color: white;
+        }
+        .dropdown-content.show {
+            display: block;
+        }
+        .dropdown-content {
+            text-align: left;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding: 10px;
+            color: #000;
+            font-size: 12px;
+            text-align: center;
+            border-radius: 5px;
+            background-color: #E8EAED;
+            font-family: monospace;
+        }
+        #toast {
+            background-color: #E8EAED;
+            color: #0056b3;
+            padding: 15px;
+            border-radius: 5px;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            display: none;
+            animation: slideIn 0.5s ease-in-out forwards, fadeOut 0.5s ease-in-out forwards 2.5s;
+        }
+        @keyframes slideIn {
+            from {
+                top: -100px;
+            }
+            to {
+                top: 20px;
+            }
+        }
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+        .marquee {
+            width: 100%;
+            color: #442866;
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
+        }
+        .marquee p {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee 20s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .blink i, .blink span {
+            animation: blink 1s infinite;
+        }
+        .blink:hover {
+            animation: blink 1s infinite;
+        }
+        #confirmDialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+        #confirmDialog p {
+            margin: 0 0 20px 0;
+        }
+        #confirmDialog .button {
+            padding: 5px 30px;
+            margin: 0px;
+        }
+        .custom-dropdown {
+            position: relative;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .custom-dropdown select {
+            display: none;
+        }
+        .select-selected {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #442866;
+            color: white;
+            padding: 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 290px;
+            text-align: left;
+        }
+        .select-selected::after {
+            font-size: 50px;
+            font-family: 'FontAwesome';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .select-items {
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 300px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 55;
+            display: none;
+            border-radius: 11px;
+        }
+        .select-items div {
+            color: #442866;
+            padding: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .select-items div:hover {
+            background-color: #442866;
+            color: white;
+        }
+        .select-items div i {
+            margin-right: 8px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .progress-bar {
+            display: none; /* Initially hidden */
+            margin-top: 20px;
+            width: 100%;
+            max-width: 800px;
+            background-color: #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            text-align: center;
+            font-family: monospace;
+            font-size: 16px;
+        }
+        .progress-bar .progress {
+            height: 30px;
+            background-color: #442866;
+            width: 0;
+            color: white;
+            line-height: 30px;
+            transition: width 0.3s;
+        }
+        .blink {
+            font-weight: bold;
+            animation: blinking 1s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="marquee">
+        <p>Welcome to the VPN Decryption Tool! | notYoursupportSystem™</p>
+    </div>
+    <div class="container">
+        <img src="https://i.postimg.cc/RVDP8fTr/base7.png" alt="Profile Picture" class="profile-picture">
+        <div style="position: absolute; top: 10px; right: 10px;">
+            <div class="dropdown">
+                <button onclick="toggleDropdown()" class="dropbtn" id="dropdownBtn">Menu</button>
+                
+                <div class="dropdown-content" id="dropdownContent">
+                    <a href="#" onclick="copyToClipboard(event)"><i class="fas fa-copy blink"></i> <span class="blink">Copy Result</span></a>
+                    <a href="#" onclick="clearAll(event)"><i class="fas fa-trash blink"></i> <span class="blink">Delete All</span></a>
+                    <a href="#" onclick="saveToFile(event)"><i class="fas fa-save blink"></i> <span class="blink">Save Result to SD Card</span></a>
+                    <a href="https://t.me/baseteamN7" target="_blank"><i class="fas fa-sync-alt blink"></i> <span class="blink">Update</span></a>
+                    <a href="https://t.me/baseteamN7" target="_blank"><i class="fab fa-telegram blink"></i> <span class="blink">BaseN7-Devz</span></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="header">XD-TOOLS <i class="fab fa-python" style="color:  #442866;;"></i></div>
+
+        <div class="custom-dropdown">
+            <div class="select-selected">CHOOSE VPN NAME <i class="fa fa-cog fa-spin"></i></div>
+
+            <div class="select-items">             
+                <div data-value="Astro Tunnel"><i class="fas fa-shield-alt"></i> <span class="blink">Astro Tunnel</span></div>
+                <div data-value="Mina VPN Pro"><i class="fas fa-shield-alt"></i> <span class="blink">Mina VPN Pro</span></div>
+            </div>
+        </div>
+
+        <form id="vpnForm" method="post" action="/" onsubmit="return checkSelection()">
+            <input type="hidden" name="vpnName" id="vpnName">
+            <button type="submit" class="button"><i class="fa fa-download"></i> <span class="blink">DECRYPT</span></button>
+
+
+
+        </form>
+        
+        <div id="result" class="result {% if result %}active{% endif %}">
+            {% if result %}
+            <textarea id="resultContent" readonly>{{ result }}</textarea>
+            {% endif %}
+        </div>
+
+        <!-- Progress bar container -->
+        <div id="progressBarContainer" class="progress-bar">
+            <div id="progressBar" class="progress">0%</div>
+        </div>
+        
+        <!-- Add loading spinner -->
+        <div id="loadingSpinner" class="loading-spinner">
+            <div></div>
+        </div>
+    </div>
+    <footer>notYoursupportSystem™ - &copy; 2024 All Rights Reserved</footer>
+    <div id="toast">Copied to clipboard!</div>
+    <div id="confirmDialog">
+        <p>Are you sure you want to exit?</p>
+        <div class="buttons">
+            <button class="button" onclick="closeConfirmDialog()">Later</button>
+            <button class="button" onclick="exitApp()">Yes</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const selectSelected = document.querySelector(".select-selected");
+            const selectItems = document.querySelector(".select-items");
+            const hiddenInput = document.getElementById("vpnName");
+
+            selectSelected.addEventListener("click", function() {
+                selectItems.style.display = selectItems.style.display === "block" ? "none" : "block";
+            });
+
+            document.querySelectorAll(".select-items div").forEach(function(item) {
+                item.addEventListener("click", function() {
+                    selectSelected.textContent = this.textContent.trim();
+                    hiddenInput.value = this.getAttribute("data-value");
+                    selectItems.style.display = "none";
+                });
+            });
+
+            document.addEventListener("click", function(event) {
+                if (!event.target.matches('.select-selected') && !event.target.matches('.select-items div')) {
+                    selectItems.style.display = "none";
+                }
+            });
+        });
+
+        function checkSelection() {
+            const hiddenInput = document.getElementById("vpnName");
+            if (!hiddenInput.value) {
+                showToast("Please select a VPN name!");
+                return false;
+            }
+            showProgressBar(); // Show progress bar when decrypt button is clicked
+            return true;
+        }
+
+        function showProgressBar() {
+            const progressBarContainer = document.getElementById("progressBarContainer");
+            const progressBar = document.getElementById("progressBar");
+            progressBarContainer.style.display = "block"; // Show the progress bar container
+            let progress = 0;
+            const interval = setInterval(() => {
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    progressBar.textContent = "100%";
+                    hideProgressBar(); // Hide the progress bar after it reaches 100%
+                } else {
+                    progress += 3;
+                    progressBar.style.width = progress + "%";
+                    progressBar.textContent = progress + "%";
+                }
+            }, 100); // Adjust the interval speed as needed
+        }
+
+        function hideProgressBar() {
+            setTimeout(() => {
+                const progressBarContainer = document.getElementById("progressBarContainer");
+                progressBarContainer.style.display = "none";
+            }, 500); // Adjust the delay as needed
+        }
+
+        function confirmExit(event) {
+            event.preventDefault();
+            document.getElementById("confirmDialog").style.display = "block";
+        }
+
+        function closeConfirmDialog() {
+            document.getElementById("confirmDialog").style.display = "none";
+        }
+
+        function exitApp() {
+            console.log("Exiting the app");
+            closeConfirmDialog();
+
+            if (window.cordova) {
+                if (navigator.app && navigator.app.exitApp) {
+                    navigator.app.exitApp();
+                } else {
+                    console.log("navigator.app.exitApp is not available");
+                }
+            } else {
+                if (confirm("Are you sure you want to exit?")) {
+                    if (window.open && window.open('', '_self')) {
+                        window.close();
+                    } else {
+                        console.log("window.close is not available");
+                    }
+                } else {
+                    console.log("User canceled exit");
+                }
+            }
+        }
+
+        function toggleDropdown() {
+            document.getElementById("dropdownContent").classList.toggle("show");
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+
+        function copyToClipboard(event) {
+            event.preventDefault();
+            const resultText = document.querySelector('.result textarea');
+            if (resultText) {
+                resultText.select();
+                resultText.setSelectionRange(0, 99999);
+                navigator.clipboard.writeText(resultText.value);
+                showToast("Result copied to clipboard!");
+            }
+        }
+
+        function clearAll(event) {
+            event.preventDefault();
+            document.getElementById("result").classList.remove("active");
+            document.querySelector('.result textarea').value = '';
+            showToast("All data deleted!");
+        }
+
+        function saveToFile(event) {
+            event.preventDefault();
+            const resultText = document.querySelector('.result textarea').value;
+            if (resultText) {
+                const fileName = prompt("Enter file name", "xd101-result.txt");
+                if (fileName) {
+                    const element = document.createElement("a");
+                    const file = new Blob([resultText], { type: 'text/plain' });
+                    element.href = URL.createObjectURL(file);
+                    element.download = fileName;
+                    document.body.appendChild(element);
+                    element.click();
+                }
+            } else {
+                showToast("No data to save!");
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.style.display = "block";
+            setTimeout(() => {
+                toast.style.display = "none";
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
